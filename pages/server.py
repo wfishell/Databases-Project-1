@@ -1,6 +1,6 @@
 from sqlalchemy import *
 from sqlalchemy import create_engine, text # Import text
-engine = create_engine('postgresql://wf2322:St278-Ahobo$#cGHh@w4111.cisxo09blonu.us-east-1.rds.amazonaws.com/w4111')
+engine = create_engine()
 conn = engine.connect()
 def setSchema():
     cursor = conn.execute(text("SET search_path TO wf2322;")) 
