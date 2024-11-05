@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="flashes">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+<h1>Sign Up Page</h1>
+
+</body>
+<form action="/signup" method="POST">
+<div class="Signup-form">
+    <div class="Sign UP">
+    
+    <input type="text" class="login-field" value="" placeholder="username" name="username">
+    <label class="login-field-icon fui-user" for="login-name"></label></div>
+    
+    <input type="text" class="login-field" value="" placeholder="email" name="email">
+    <label class="signup-field-icon fui-user" for="signup-name"></label></div>
+    <input type="text" class="login-field" value="" placeholder="interests" name="interests">
+    <label class="signup-field-icon fui-user" for="signup-name"></label></div>
+    <p>Leave the interests blank if you like, but it will help us match you with others!</p>
+    <input type="submit" value="Sign Up" class="btn btn-primary btn-large btn-block"><br>
+    </form>
+    </div>
+    <a href="{{ url_for('home') }}">Home</a><br>
+    <a href="{{ url_for('login') }}">Already have an account? Login here!</a><br>
+    </div>
+</html>

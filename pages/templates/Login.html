@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Login</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<form action="/login" method="POST">
+<div class="login">
+<div class="login-screen">
+<div class="app-title">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="flashes">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+<h1>Login
+
+
+</h1>
+</div>
+<div class="Home Button">
+    <a href="{{ url_for('home') }}">Home</a><br>
+    <a href="{{ url_for('signup') }}">Don't have an account? Sign up here!</a><br>
+</div>
+<div class="login-form">
+<div class="control-group">
+				<input type="text" class="login-field" value="" placeholder="username" name="username">
+<label class="login-field-icon fui-user" for="login-name"></label></div>
+<input type="submit" value="Log in" class="btn btn-primary btn-large btn-block">
+
+</div>
+</div>
+</div>
+</form>
+</head>
+</html>
