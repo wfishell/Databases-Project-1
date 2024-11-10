@@ -22,16 +22,16 @@
 
 </h1>
 </div>
-<div class="Home Button">
-    <a href="{{ url_for('home') }}">Home</a><br>
-    <a href="{{ url_for('signup') }}">Don't have an account? Sign up here!</a><br>
-</div>
+
 <div class="login-form">
 <div class="control-group">
 				<input type="text" class="login-field" value="" placeholder="username" name="username">
 <label class="login-field-icon fui-user" for="login-name"></label></div>
 <input type="submit" value="Log in" class="btn btn-primary btn-large btn-block">
-
+<div class="Home Button"></div>
+    <a href="{{ url_for('home') }}">Home</a><br>
+    <a href="{{ url_for('LoginSignup.signup') }}">Don't have an account? Sign up here!</a><br>
+</div>
 </div>
 </div>
 </div>

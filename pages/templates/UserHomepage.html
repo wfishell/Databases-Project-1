@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Results</title>
+</head>
+
+<body>
+  <h1>{{ username }}'s HomePage!</h1>
+  <ul>
+    <h2>Managed Projects:</h2>
+    <ul>
+       {% for project in managed_projects %}
+           <li><a href="#">{{ project }}</a></li>
+       {% endfor %}
+    </ul>
+    
+    <h2>Joined Projects:</h2>
+    <ul>
+       {% for project in joined_projects %}
+           <li><a href="#">{{ project }}</a></li>
+       {% endfor %}
+    </ul>
+  <div class="Create Project"></div><br>
+  <a href="{{ url_for('UserProfile.createproject', username=username) }}">create a project here!</a><br>
+</div>
+   
+</body>
+</html>

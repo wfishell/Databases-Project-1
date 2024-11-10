@@ -1,17 +1,9 @@
-from flask import Flask
-from flask import Flask, flash, redirect, render_template, request, session, abort
-import os
-from sqlalchemy import create_engine, text
-from sqlalchemy.exc import IntegrityError
-app = Flask(__name__)
-uri='postgresql://wf2322:St278-Ahobo$#cGHh@w4111.cisxo09blonu.us-east-1.rds.amazonaws.com/w4111'
-engine=create_engine(uri)
+from Packages import *
 
-@app.route('/')
-def home():
-    return render_template('home.html')
+LoginSignup = Blueprint('LoginSignup', __name__, template_folder='templates')
 
-@app.route('/login', methods=['GET','POST'])
+
+@LoginSignup.route('/login', methods=['GET','POST'])
 def login():
     if request.method == 'POST':
         Post_Username = str(request.form['username'])
@@ -24,14 +16,14 @@ def login():
         
         if result:
             session['logged_in'] = True
-            return redirect('/')  
+            return redirect(f'/userprofile/{Post_Username}')  
         else:
             flash('Invalid username. Please try again.', 'error')
             return render_template('login.html')
     
     return render_template('Login.html')
 
-@app.route('/signup', methods=['GET','POST'])
+@LoginSignup.route('/signup', methods=['GET','POST'])
 def signup():
     if request.method == 'POST':
         Post_Username = str(request.form['username'])
@@ -51,12 +43,10 @@ def signup():
                 query=f"INSERT INTO users (USERID, username, projectScore, email, interests) VALUES ({new_userid}, '{Post_Username}', 0, '{Post_Email}', '{Post_Interests}')"
                 conn.execute(text(query))
                 conn.commit()
-                return redirect('/login')
+                return redirect(url_for('LoginSignup.login'))
             except IntegrityError as e:
                 flash('Error signing up. Please try again.', 'error')
             conn.close()
+        else:
+            flash('Use a proper email address', 'error')
     return render_template('SignUp.html')
-
-if __name__ == "__main__":
-    app.secret_key = os.urandom(12)
-    app.run(debug=True,host='0.0.0.0', port=4000)

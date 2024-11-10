@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Create Project</title>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+    <ul class="flashes">
+        {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+{% endwith %}
+<h1>Create Project</h1>
+
+<form action="{{ url_for('UserProfile.createproject', username=username) }}" method="POST">
+<input type="text" class="create-project" value="" placeholder="Project Category" name="Project_Category">
+<label class="create-project-icon fui-user" for="create-project"></label></div>
+<input type="text" class="create-project" value="" placeholder="Max Number Of Participants" name="Max_Part">
+<label class="create-project-icon fui-user" for="create-project"></label></div>
+<input type="text" class="create-project" value="" placeholder="Project Description" name="Project_Description">
+<label class="create-project-icon fui-user" for="create-project"></label></div>
+<input type="text" class="create-project" value="" placeholder="External Website Link" name="URL">
+<label class="create-project-icon fui-user" for="create-project"></label></div>
+<p>Put a longer description of the project in the description category than just the category.</p>
+<p>Use the URL for any external information you want to share about your project, like a website or GitHub repo.</p>
+<input type="submit" value="Create Project" class="btn btn-primary btn-large btn-block">
+</form>
+
+</body>
+</html>
