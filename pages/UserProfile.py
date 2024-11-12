@@ -6,9 +6,9 @@ UserProfile = Blueprint('UserProfile', __name__, template_folder='templates')
 def UserPage(username):
         conn = engine.connect()
         conn.execute(text("SET SCHEMA 'wf2322'"))
-        query=f"""select cP.ProjectDescription 
+        query=f"""select cP.ProjectDescription, cp.ProjectID 
                                    from createproject cp inner join Users u on u.userid=cp.userid
-                                    where u.username='{username}' order by cp.ParticipantsSoFar desc limit 3"""
+                                    where u.username='{username}' order by cp.ParticipantsSoFar desc"""
         managed_projects = conn.execute(text(query)).fetchall()
         if not managed_projects:
               managed_projects=[('Currently Managing No Projects',)]
@@ -19,7 +19,7 @@ def UserPage(username):
                     where u.username='{username}'
                     ),
                     ProjectNames as (
-                    select cp.ProjectDescription
+                    select cp.ProjectDescription, cp.projectid
                     from CreateProject cp
                     inner join UserJoinedProjects ujp on ujp.projectid=cp.projectid
                     )
@@ -37,11 +37,11 @@ def UserPage(username):
         conn.close()
         managed_project_description_list=[] 
         for project in managed_projects:
-              managed_project_description_list.append(project[0])
+              managed_project_description_list.append(project)
         
         joined_project_description_list=[]
         for project in joined_projects:
-              joined_project_description_list.append(project[0])
+              joined_project_description_list.append(project)
         
         return render_template('UserHomepage.html', username=username,managed_projects=managed_project_description_list,joined_projects=joined_project_description_list)
 

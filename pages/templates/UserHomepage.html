@@ -11,14 +11,14 @@
     <h2>Managed Projects:</h2>
     <ul>
        {% for project in managed_projects %}
-           <li><a href="#">{{ project }}</a></li>
+           <li><a href="{{ url_for('project.project_page', project_id=project[1])}}">{{ project[0] }}</a></li>
        {% endfor %}
     </ul>
     
     <h2>Joined Projects:</h2>
     <ul>
        {% for project in joined_projects %}
-           <li><a href="#">{{ project }}</a></li>
+           <li><a href="{{ url_for('project.project_page', project_id=project[1])}}">{{ project[0] }}</a></li>
        {% endfor %}
     </ul>
   <div class="Create Project"></div><br>
