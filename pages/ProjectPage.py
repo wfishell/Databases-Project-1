@@ -1,5 +1,3 @@
-
-
 from Packages import *
 
 project = Blueprint('project', __name__, template_folder='templates')
@@ -110,7 +108,8 @@ def project_page(project_id):
 @project.route('/project/<int:project_id>/post/<int:post_id>/comment', methods=['POST'])
 def add_comment(project_id, post_id):
     user_id = session.get('user_id')
-    if not user_id:
+    Check=CheckIfUserOnProject(user_id, project_id)
+    if Check==0:
         flash('You need to join the project first', 'error')
         return redirect(url_for('project.project_page', project_id=project_id))
     comment_contents = str(request.form['comment_contents'])
@@ -144,10 +143,43 @@ def add_comment(project_id, post_id):
     conn.close()
     return redirect(url_for('project.project_page', project_id=project_id))
 
+@project.route('/project/<int:project_id>/join', methods=['GET','POST'])
+def join_project(project_id):
+    conn = engine.connect()
+    conn.execute(text("SET SCHEMA 'wf2322'"))
+    user_id = session.get('user_id')
+    Check=CheckIfUserOnProject(user_id, project_id)
+    if Check!=0:
+        flash('You have already joined this project', 'error')
+        return redirect(url_for('project.project_page', project_id=project_id))
+    CurrentParticipants = text("""
+            Select MaxParticipantsNeeded-ParticipantsSoFar
+            From CreateProject
+            where projectid= :project_id
+        """)
+    NumSpots=conn.execute(CurrentParticipants,{'project_id':project_id}).scalar()
+    if NumSpots==0:
+        flash('There are no spots left for this project','error')
+        return redirect(url_for('project.project_page', project_id=project_id))
+    
+    insert_query = text("""
+            INSERT INTO JoinProject (UserID, ProjectID)
+            VALUES (:user_id, :project_id)
+        """)
+    try:
+        conn.execute(insert_query, {'user_id': user_id, 'project_id': project_id})
+        conn.commit()
+        flash('Joined Project!', 'success')
+    except Exception as e:
+        flash('Failed to Join Project', 'error')
+    conn.close()
+    return redirect(url_for('project.project_page', project_id=project_id))
+    
 @project.route('/project/<int:project_id>/post/<int:post_id>/heart', methods=['GET','POST'])
 def add_remove_heart(project_id, post_id):
     user_id = session.get('user_id')
-    if not user_id:
+    Check=CheckIfUserOnProject(user_id, project_id)
+    if Check==0:
         flash('You need to join the project first', 'error')
         return redirect(url_for('project.project_page', project_id=project_id))
 
@@ -187,7 +219,8 @@ def add_remove_heart(project_id, post_id):
 @project.route('/project/<int:project_id>', methods=['GET','POST'])
 def add_post(project_id):
     user_id = session.get('user_id')
-    if not user_id:
+    Check=CheckIfUserOnProject(user_id, project_id)
+    if Check==0:
         flash('You need to join the project first', 'error')
         return redirect(url_for('project.project_page', project_id=project_id))
     
@@ -210,11 +243,12 @@ def add_post(project_id):
         is_question=False
 
     post_id_query= text("""
-        SELECT MAX(COALESCE(PostID, 0))+1
+        SELECT (COALESCE(MAX(PostID), 0))+1
         FROM POST
         WHERE ProjectID=:project_id
     """)
     post_id = conn.execute(post_id_query, {'project_id': project_id}).scalar()
+    print(project_id,'projectid')
     print(post_id,'postid')
     post_query = text("""
         INSERT INTO POST(ProjectID, PostID, PostTitle, PostContents, PostDate, IsQuestion)
@@ -234,3 +268,38 @@ def add_post(project_id):
         flash('Failed to add post.', 'error')
     conn.close()
     return redirect(url_for('project.project_page', project_id=project_id))
+
+def CheckIfUserOnProject(userid, projectid):
+    conn = engine.connect()
+    conn.execute(text("SET SCHEMA 'wf2322'"))
+    ProjectCheck = text("""
+                WITH Managed_Project AS (
+                    SELECT cp.projectid
+                    FROM users U 
+                    INNER JOIN createproject cp ON cp.userid = u.userid
+                    WHERE u.userid = :user_id AND cp.projectid = :project_id
+                ),
+                Joined_Project AS (
+                    SELECT jp.projectid
+                    FROM users U 
+                    INNER JOIN joinproject jp ON jp.userid = u.userid
+                    WHERE u.userid = :user_id AND jp.projectid = :project_id
+                ),
+                Total AS (
+                    SELECT *
+                    FROM Managed_Project
+                    UNION
+                    SELECT *
+                    FROM Joined_Project
+                )
+                SELECT COUNT(*)
+                FROM Total
+                """)
+    
+    ProjectCheck = conn.execute(ProjectCheck, {
+            'user_id': userid,
+            'project_id': projectid
+    }).scalar()
+    
+    conn.close()  
+    return ProjectCheck

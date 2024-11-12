@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <title>{{ project.ProjectDescription }}</title>
 </head>
-
 <body>
   {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
@@ -15,6 +14,9 @@
       </ul>
   {% endif %}
 {% endwith %}
+  <a href="{{ url_for('home') }}">Home</a><br>
+  <a href="{{ url_for('UserProfile.UserPage', username=session.username) }}">User Home Page</a><br>
+
   <h1>{{ project.ProjectDescription }}</h1>
  
   <p>Category: {{ project[3] }}</p>
@@ -24,13 +26,13 @@
   <p>URL: <a href="{{ project.URL }}">{{ project[7] }}</a></p>
  
   {% if not is_member %}
-    <form method="post">
+  <form method="post" action="{{ url_for('project.join_project', project_id=project[0]) }}">
       <input type="submit" value="Join Project">
-    </form>
-  {% else %}
-    <p>You are a member of this project.</p>
-    <p><a href="{{ url_for('projectcalendar.calendar_page', project_id=project[0])}}">Go to Calendar</a></p>
-  {% endif %}
+  </form>
+{% else %}
+  <p>You are a member of this project.</p>
+  <p><a href="{{ url_for('projectcalendar.calendar_page', project_id=project[0]) }}">Go to Calendar</a></p>
+{% endif %}
  
   <h2>Participants</h2>
   <ul>

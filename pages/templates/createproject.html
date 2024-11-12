@@ -12,6 +12,9 @@
     </ul>
     {% endif %}
 {% endwith %}
+<a href="{{ url_for('home') }}">Home</a><br>
+<a href="{{ url_for('UserProfile.UserPage', username=session.username) }}">User Home Page</a><br>
+
 <h1>Create Project</h1>
 
 <form action="{{ url_for('UserProfile.createproject', username=username) }}" method="POST">

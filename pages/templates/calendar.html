@@ -1,92 +1,102 @@
 <!DOCTYPE html>
 <html>
- 
+<head>
+    <title>Project Calendar</title>
+    <style>
+        table.calendar {
+            border-collapse: collapse;
+        }
+        table.calendar td, table.calendar th {
+            border: 1px solid black;
+            width: 14%;
+            vertical-align: top;
+            height: 100px;
+        }
+        .event {
+            background-color: lightblue;
+            margin: 2px;
+            padding: 2px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
 <body>
+    
+    <h1>Project Calendar</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="flashes">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+    <a href="{{ url_for('project.project_page', project_id=project_id)}}">{{ 'Return to Project Page' }}</a><br>
+    <a href="{{ url_for('home') }}">Home</a><br>
+    <a href="{{ url_for('UserProfile.UserPage', username=session.username) }}">User Home Page</a><br>
 
-    <h2 align="center" style="color:orange;">
-        January 2024
-    </h2>
-    <br />
-     
-    <table bgcolor="lightgrey" align="center"
-        cellspacing="21" cellpadding="21">
-         
- 
-        <caption align="top">
-
-        </caption>
- 
-        <thead>
-            <tr>
-
-                <th>Sun</th>
-                <th>Mon</th>
-                <th>Tue</th>
-                <th>Wed</th>
-                <th>Thu</th>
-                <th>Fri</th>
-                <th>sat</th>
-            </tr>
-        </thead>
-         
-        <tbody>
-            <tr>
+    <h2>Add Event</h2>
+    <form method="post" action="{{ url_for('projectcalendar.add_event', project_id=project_id) }}">
+        Event Title: <input type="text" name="event_title"><br>
+        Start Date: <input type="date" name="start_date"><br>
+        Start Time: <input type="time" name="start_time"><br>
+        End Date: <input type="date" name="end_date"><br>
+        End Time: <input type="time" name="end_time"><br>
+        Is Recurring: <input type="checkbox" name="is_recurring"><br>
+        <input type="submit" value="Add Event">
+    </form>
+   
+    <h2>Calendar</h2>
+    <table class="calendar">
+        <tr>
+            <th>Sun</th>
+            <th>Mon</th>
+            <th>Tue</th>
+            <th>Wed</th>
+            <th>Thu</th>
+            <th>Fri</th>
+            <th>Sat</th>
+        </tr>
+        {% set day_counter = 0 %}
+        <tr>
+            {% set first_weekday = (date_range[0].weekday() + 1) % 7 %}
+            {% for _ in range(first_weekday) %}
                 <td></td>
+                {% set day_counter = day_counter + 1 %}
+            {% endfor %}
+            {% for date in date_range %}
+                {% if day_counter % 7 == 0 and day_counter != 0 %}
+                    </tr><tr>
+                {% endif %}
+                <td>
+                    <strong>{{ date.day }}</strong>
+                    {% for event in events %}
+                        {% if date.date() >= event['starttime'].date() and date.date() <= event['endtime'].date() %}
+                            <div class="event">
+                                {{ event['eventtitle'] }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                {% set day_counter = day_counter + 1 %}
+            {% endfor %}
+            {% for _ in range((7 - day_counter % 7) % 7) %}
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>1</td>
-                <td>2</td>
-            </tr>
-            <tr></tr>
-            <tr>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
-            </tr>
-            <tr>
-                <td>10</td>
-                <td>11</td>
-                <td>12</td>
-                <td>13</td>
-                <td>14</td>
-                <td>15</td>
-                <td>16</td>
-            </tr>
-            <tr>
-                <td>17</td>
-                <td>18</td>
-                <td>19</td>
-                <td>20</td>
-                <td>21</td>
-                <td>22</td>
-                <td>23</td>
-            </tr>
-            <tr>
-                <td>24</td>
-                <td>25</td>
-                <td>26</td>
-                <td>27</td>
-                <td>28</td>
-                <td>29</td>
-                <td>30</td>
-            </tr>
-            <tr>
-                <td>31</td>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-            </tr>
-        </tbody>
+            {% endfor %}
+        </tr>
     </table>
+   
+    <h2>List of Events</h2>
+    <ul>
+    {% for event in events %}
+        <li>
+            <strong>Event ID:</strong> {{ event['eventid'] }}<br>
+            <strong>Title:</strong> {{ event['eventtitle'] }}<br>
+            <strong>Start:</strong> {{ event['starttime'] }}<br>
+            <strong>End:</strong> {{ event['endtime'] }}<br>
+        </li>
+    {% endfor %}
+    </ul>
 </body>
- 
 </html>

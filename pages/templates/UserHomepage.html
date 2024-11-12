@@ -6,21 +6,33 @@
 </head>
 
 <body>
+  <a href="{{ url_for('home') }}">Home</a><br>
   <h1>{{ username }}'s HomePage!</h1>
   <ul>
     <h2>Managed Projects:</h2>
-    <ul>
-       {% for project in managed_projects %}
-           <li><a href="{{ url_for('project.project_page', project_id=project[1])}}">{{ project[0] }}</a></li>
-       {% endfor %}
-    </ul>
-    
+    {% if managed_projects != [('Currently Managing No Projects',)] %}
+      <ul>
+      {% for project in managed_projects %}
+          <li><a href="{{ url_for('project.project_page', project_id=project[1])}}">{{ project[0] }}</a></li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p>Currently not managing any projects! Create one using the link below</p>  
+    {% endif %}
     <h2>Joined Projects:</h2>
+    {%  if joined_projects!=[('Currently Joined No Projects',)] %}
     <ul>
        {% for project in joined_projects %}
            <li><a href="{{ url_for('project.project_page', project_id=project[1])}}">{{ project[0] }}</a></li>
        {% endfor %}
     </ul>
+    {% else %}
+    <ul>
+      {% for project in alt_projects %}
+          <li><a href="{{ url_for('project.project_page', project_id=project[1])}}">{{ project[0] }}</a></li>
+      {% endfor %}
+   </ul>
+   {% endif %}
   <div class="Create Project"></div><br>
   <a href="{{ url_for('UserProfile.createproject', username=username) }}">create a project here!</a><br>
 </div>
