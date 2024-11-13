@@ -166,8 +166,14 @@ def join_project(project_id):
             INSERT INTO JoinProject (UserID, ProjectID)
             VALUES (:user_id, :project_id)
         """)
+    update_project_members=text("""
+            UPDATE CreateProject
+            SET ParticipantsSoFar=ParticipantsSoFar+1
+            Where ProjectID=:project_id""")
     try:
         conn.execute(insert_query, {'user_id': user_id, 'project_id': project_id})
+        conn.commit()
+        conn.execute(update_project_members,{'project_id':project_id})
         conn.commit()
         flash('Joined Project!', 'success')
     except Exception as e:
