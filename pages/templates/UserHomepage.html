@@ -20,19 +20,20 @@
     {% else %}
       <p>Currently not managing any projects! Create one using the link below</p>  
     {% endif %}
-    <h2>Joined Projects:</h2>
     {%  if joined_projects!=[('Currently Joined No Projects',)] %}
-    <ul>
+      <h2>Joined Projects:</h2>
+      <ul>
        {% for project in joined_projects %}
            <li><a href="{{ url_for('project.project_page', project_id=project[1])}}">{{ project[0] }}</a></li>
        {% endfor %}
-    </ul>
+      </ul>
     {% else %}
-    <ul>
+      <h2>Join Projects:</h2>
+      <ul>
       {% for project in alt_projects %}
           <li><a href="{{ url_for('project.project_page', project_id=project[1])}}">{{ project[0] }}</a></li>
       {% endfor %}
-   </ul>
+     </ul>
    {% endif %}
   <div class="Create Project"></div><br>
   <a href="{{ url_for('UserProfile.createproject', username=username) }}">create a project here!</a><br>
