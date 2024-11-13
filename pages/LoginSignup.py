@@ -10,8 +10,8 @@ def login():
         
         conn = engine.connect()
         conn.execute(text("SET SCHEMA 'wf2322'"))
-        query=f"SELECT * FROM users WHERE username = '{Post_Username}'"
-        result = conn.execute(text(query)).fetchone()
+        query=text(f"SELECT * FROM users WHERE username = :username")
+        result = conn.execute(query,{'username':Post_Username}).fetchone()
         conn.close()
         
         if result:
@@ -20,7 +20,7 @@ def login():
             return redirect(f'/userprofile/{Post_Username}')  
         else:
             flash('Invalid username. Please try again.', 'error')
-            return render_template('login.html')
+            return render_template('Login.html')
     
     return render_template('Login.html')
 

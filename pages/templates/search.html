@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <div class="app-title">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        
+        <a href="{{ url_for('home') }}">Home</a><br>
+        <a href="{{ url_for('UserProfile.UserPage', username=username) }}">User Home Page</a><br>
+        <h1>Search</h1>
+    </div>
+
+    <div class="search">
+        <div class="control-group">
+            <form method="POST" action="{{ url_for('Search.search') }}">                
+                <input type="text" class="sear-field" placeholder="Search" name="Search" required>
+                <label class="Search-field-icon fui-user" for="project_search"></label>
+                <input type="submit" value="search" class="btn btn-primary btn-large btn-block">
+            </form>
+        </div>
+    </div>
+
+    <ul>
+    {% if results %}
+        {% for project in results %}
+            <li><a href="{{ url_for('project.project_page', project_id=project[0]) }}">{{ project[1] }}</a></li>
+        {% endfor %}
+    {% endif %}
+    </ul>
+</body>
+</html>
